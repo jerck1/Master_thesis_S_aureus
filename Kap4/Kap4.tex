@@ -1,0 +1,126 @@
+\chapter{Metodolog\'{i}a}
+
+Se realizaron simulaciones por din\'{a}mica molecular de 10 sistemas lip\'{i}dicos que representan la membrana bacteriana de \textit{Staphylococcus aureus}. Estos sistemas est\'{a}n compuestos de membranas puras: 1) DMPG, 2) DPPG; sistemas con 1 estafiloxantina inmersa en las membranas puras:  3) 1STX:128DMPG,  4) 1STX:128DPPG; con una concentraci\'{o}n de un 15\% mol de estafiloxantina:  5) 15 \%  mol STX  en  DMPG, 6) 15 \%mol STX en DPPG; los mismos sistemas anteriores pero con nuevos par\'{a}metros de estafiloxantina que hacen m\'{a}s r\'{i}dia la mol\'{e}cula: 7) 1STXr\'{i}gido:128DMPG,  8) 1STXr\'{i}gido:128DPPG,  9) 15 \%  mol STXr\'{i}gido  en  DMPG y 10) 15 \%mol STXr\'{i}gido en DPPG. 
+\section{Simulaciones de Membranas Puras} \label{sec:mem-pure}
+En esta parte del trabajo se reproducen las simulaciones realizadas por Mel\'{e}ndez et al. \cite{Melendez-Delgado2018StudyingBilayers} para  dos sistemas compuestos por un solo l\'{i}pido: 1) DMPG y 2) DPPG. El protocolo seguido para realizar las simulaciones sigue los siguientes pasos: Ensamblaje, minimizaci\'{o}n de la energ\'{i}a, relajaci\'{o}n o equilibraci\'{o}n del sistema y simulaci\'{o}n del sistema o producci\'{o}n. \\
+
+
+\subsection*{Ensamblaje}
+
+Se ensamblan las bicapas lip\'{i}dicas DMPG y DPPG mediante la herramienta de ensamblaje de CHARMM-GUI \cite{Brooks2009}, insertando 64 l\'{i}pidos por monocapa. Adicionalmente, a cada sistema se le agregar\'{a}n 45 mol\'{e}culas de agua por l\'{i}pido,  un ion de \ce{Na^+} por l\'{i}pido  para contrarrestar la carga negativa y 0.15M de \ce{NaCl} para reproducir la condiciones fisiol\'{o}gicas de sal. El campo de fuerza utilizado para parametrizar los l\'{i}pidos es $charmm36$, \cite{Huang2013CHARMM36Data}, el cual ha sido implementado en CHARMM-GUI por \cite{Lee2016CHARMM-GUIField}.\\
+
+\subsection*{Minimizaci\'{o}n de la Energ\'{i}a}
+
+Para remover el sobrelapamiento entre los \'{a}tomos durante el proceso de ensamblaje, que pueda causar inestabilidades durante las simulaciones de din\'{a}mica molecular, se realizar\'{a} una minimizaci\'{o}n de la energ\'{i}a, por 5000 pasos, usando el m\'{e}todo de gradiente decreciente. Est\'{a} simulaci\'{o}n se realizar\'{a} con el paquete de simulaci\'{o}n principal \textit{gromacs} 2019.3, \cite{Abraham2015Gromacs:Supercomputers}.
+
+
+\subsection*{Relajaci\'{o}n}
+
+Las coordenadas obtenidas a partir de la minimizaci\'{o}n de la energ\'{i}a se relajar\'{a}n en 6 simulaciones de din\'{a}mica molecular sucesivas, de 25ps cada una, integrando las ecuaciones de movimiento a pasos discretos de tiempo de 1fs. Este valor es 10 veces menor al per\'{i}odo asociado a la frecuencias de vibraci\'{o}n m\'{a}s alta encontrada para este sistema, correspondiente a fluctuaciones en las posiciones en los \'{a}tomos de hidr\'{o}geno. Durante cada una de las equilibraciones se impondr\'{a}n restricciones en las posiciones y en los \'{a}ngulos dihedros de un \'{a}tomo en la cabeza de cada l\'{i}pido, con el fin de que estos no se desv\'{i}en significativamente de sus posiciones iniciales y que las cadenas lip\'{i}dicas no adopten orientaciones artificiales. Estas restricciones se ir\'{a}n removiendo gradualmente durante las 6 simulaciones de relajaci\'{o}n.\\
+
+\subsection*{Simulaci\'{o}n}
+
+Se impondr\'{a}n condiciones de frontera peri\'{o}dicas en una caja ortorr\'{o}mbica. El sistema se mantendr\'{a} a una presi\'{o}n de 1bar y a temperatura de 323K constantes (condiciones termodin\'{a}micas NPT) acopl\'{a}ndolo a un barostato de Parinello-Rahman \cite{Parrinello1981PolymorphicMethod} y a un termostato de Nose-Hoover. Las interacciones no enlazantes de corto alcance se modelar\'{a}n mediante un potencial de Lennard-Jones (ecuaci\'{o}n \eqref{eq:7}). EL potencial de Coulomb (ecuaci\'{o}n 7) se calcular\'{a} por el medio del m\'{e}todo de \textit{Particle Mesh Ewald (PME)}, apropiado para sistemas peri\'{o}dicos \cite{Darden1993ParticleSystems}. Los enlaces relacionados con los \'{a}tomos de hidr\'{o}geno  se restringir\'{a}n a trav\'{e}s de ligaduras utilizando el algoritmo de LINCS \cite{Hess1997LINCS:Simulations} y para el caso del agua tambi\'{e}n se emplean restricciones para tener agua r\'{i}gida, empleando el algoritmo SETTLE \cite{Miyamoto1992Settle:Models}. Estas restricciones permitir\'{a}n aumentar el paso de tiempo de integraci\'{o}n a 2fs. Para cada uno de los sistemas considerados, 1) y 2), se realiza una simulaci\'{o}n de $1\mu$s. Las dos simulaciones se realizan usando cpus del cl\'{u}ster de la universidad de los Andes, cada una de estas dura alrededor de 3 semanas.\\
+
+\section{Simulaciones de una Estafiloxantina inmersa en membranas de DMPG y DPPG } \label{sec:1stxpg}
+Dentro de las membranas 1) DMPG y 2) DPPG se inserta posteriormente una mol\'{e}cula de estafiloxantina, de la misma forma que lo realizado por \cite{Melendez-Delgado2018StudyingBilayers}. Al realizar un ensamblaje previo en la plataforma de CHARMM-GUI \cite{Brooks2009} se encuentra que los par\'{a}metros de la estafiloxantina no est\'{a}n bien descritos en la porci\'{o}n de la cadena diaponeurosporenoica (enlaces dobles conjugados) \footnote{Los par\'{a}metros de la cadena diaponeurosporenoica no est\'{a}n bien descritos puesto que la energ\'{i}a potencial dih\'{e}drica no muestra la planaridad t\'{i}pica de los enlaces dobles conjugados, la cual es sugerida para mol\'{e}culas que presentan enlaces dobles conjugados, puesto que los electrones de estos enlaces se deslocalizan produciendo un complejo similar al de los anillos arom\'{a}ticos.}, lo cual es acorde a la metodolog\'{i}a de Mel\'{e}ndez et. al. \cite{Melendez-Delgado2018StudyingBilayers}, as\'{i} como \cite{Grudzinski2017LocalizationBilayer}. Por esto, previamente se realiza una parametrizaci\'{o}n del campo de fuerza para la estafiloxantina de acuerdo al siguiente protocolo:\\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+
+\subsection*{Parametrizaci\'{o}n de Estafiloxantina}
+\begin{enumerate}
+    \item Se toma la secuencia isomeric SMILES de la base de datos pubChem, \cite{NationalCenterforBiotechnologyInformationStaphyloxanthinCID=56928085}.
+    \item  Luego, el isomeric SMILES se coloca como entrada en el traductor de archivos SMILE y generador de archivos del NIH   \cite{OellienOnlineTranslator}, con el fin de generar una estructura tridimensional de la estafiloxantina  en formatos .pdb y .sdf.
+    \item  Posteriormente, la estructura en formato .sdf es ingresada al lector y modelador de ligandos de la plataforma CHARMM-GUI  \footnote{Recurso disponible en \href{ http://www.charmm-gui.org/?doc=input/ligandrm}{ http://www.charmm-gui.org/?doc=input/ligandrm}, ver \cite{Brooks2009}} para obtener nuevamente una estructura tridimensional y principalmente el campo de fuerzas de la mol\'{e}cula.
+    \item Con los archivos obtenidos se alinea la mol\'{e}cula de tal forma que las dos cadenas formen el mismo \'{a}ngulo de apertura respecto al eje $z$. El programa usado para realizar el alineamiento es gromacs 2019.3. \cite{GROMACSdevelopmentteam2019GROMACSDocumentation}.
+    \item Se revisa la estructura de la estafiloxantina para verificar que sus enlaces dihedrales tengan una geometr\'{i}a trans planar.
+    \item Se realiza el ensamblaje de la membrana en CHARMM-GUI con los mismos par\'{a}metros usados en el ensamblaje de los sistemas puros y agregando la estructura alineada (en pdb) de la estafiloxantina. 
+    \item Para verificar que la estructura de la estafiloxantina sea similar en todos las membranas ensambladas, se halla la energ\'{i}a potencial total de la estafiloxantina en el tiempo inicial $t=0$. Esto se hizo mediante una minimizaci\'{o}n de la energ\'{i}a sobre la mol\'{e}cula sola. En todos los casos la energ\'{i}a potencial dio en el orden de los $1000\mathrm{kJ}/\mathrm{mol}-3000\mathrm{kJ}/\mathrm{mol}$.
+    \item Con el fin de que los enlaces dobles conjugados de la estafiloxantina permanezcan en la posici\'{o}n trans durante toda la simulaci\'{o}n, se modifica manualmente el archivo de topolog\'{i}a .itp, el cual contiene los par\'{a}metros de la energ\'{i}a potencial dih\'{e}drica, de tal forma que la energ\'{i}a potencial tenga m\'{i}nimos en $-180^{\circ}$ y en $180^{\circ}$, que corresponden a la conformaci\'{o}n trans. Esto se hace modificando la fase de los dihedros \ce{C=C-C=C}, tal como aparece en \cite{Grudzinski2017LocalizationBilayer}.
+\end{enumerate}
+Una vez modificados los par\'{a}tros de la estafiloxantina, se siguen los mismos pasos metodol\'{i}cos para las membranas puras de la secci\'{o}n \ref{sec:mem-pure} pero justo antes de realizar la producci\'{o}n se crean 5 r\'{e}plicas por cada uno de los sistemas 1STX:128DMPG y 1STX:128DPPG, donde r\'{e}plica contiene una semilla diferente para las velocidades iniciales. Estas r\'{e}plicas son corridas alcanzando un tiempo de $400n\mathrm{s}$ por cada una, con lo cual se logra un tiempo total de $2\mu\mathrm{s}$. Las simulaciones fueron corridas en el cl\'{u}ster del instituto Max-Planck, las cuales duraron alrededor de una semana en correr.
+
+
+
+\section{Realizaci\'{o}n de las simulaciones de estafiloxantina en membranas de DMPG y DPPG colocando los par\'{a}metros obtenidos por optimizaciones QM}
+
+
+
+Al mirar el potencial de los \'{a}ngulos dihedros pr\'{o}ximos al enlace \'{e}ster en la mol\'{e}cula de estafiloxantina, que corresponden a los enlaces \ce{O1-C22-C23-C24} de la figura \ref{fig:stx}, se obtienen obtienen penalties de 14 y 120 \footnote{Para mirar los penalties de los campos de fuerza hay que ir al archivo .prm de la estafiloxantina, obtenido con CHARMM-GUI}. De acuerdo a CHARMM-GUI, si el penalti es mayor a 10 se requiere una validaci\'{o}n extra, si el penalti es mayor a 50 se requiere una validaci\'{o}n u optimizaci\'{o}n exhaustiva. Debido a lo anterior, se optimizaron los par\'{a}metros de los \'{a}ngulos dih\'{e}dricos del grupo \ce{O1-C22-C23-C24} utilizando los m\'{e}todos computacionales cu\'{a}nticos propuestos por Grudzinski et al. \cite{Grudzinski2017LocalizationBilayer} y Cerezo et al. \cite{Cerezo2012AntioxidantSimulations}. La optimizaci\'{o}n QM fue realizada  por el grupo COBO del departamento de qu\'{i}mica de la Universidad de los Andes.\\
+
+Estos c\'{a}lculos permiten describir de manera apropiada el potencial dihedro de este enlace \'{e}ster, que no es usual en l\'{i}pidos debido a su cercan\'{i}a a la cadena diaponeurosporenoica (la cual tiene electrones deslocalizados). Grudzinski et al. \cite{Grudzinski2017LocalizationBilayer} utilizaron una herramienta de optimizaci\'{o}n basada en Gaussian e implementada en el programa de visualizaci\'{o}n VMD para calibrar los par\'{a}metros de los carotenoides Xanthophylls \cite{Grudzinski2017LocalizationBilayer}. Adicionalmente, Cerezo et al., usando tambi\'{e}n Gaussian-09 \cite{Cerezo2012AntioxidantSimulations}, encontr\'{o} la energ\'{i}a potencial como funci\'{o}n de los \'{a}ngulos dihedros de la cadena poli\'{e}nica de un $\beta$-caroteno. Basados en los estudios de Grudzinski et al. y Cerezo et al., el grupo COBO realiza unas optimizaciones para encontrar la energ\'{i}a potencial dih\'{e}drica como funci\'{o}n del \'{a}ngulo, esto lo realizan por dos m\'{e}todos: MP2  y B3LYP. Los dos m\'{e}todos son implementados en el programa Gaussian y los resultados son ajustados mediante una regresi\'{o}n de funciones coseno. Los par\'{a}metros de la energ\'{i}a potencial son la fase, la multiplicidad y la amplitud de las funciones coseno obtenidas, para m\'{a}s detalles ver la ecuaci\'{o}n $(3-5)$.\\
+
+Una vez obtenidos estos par\'{a}metros, se realizar\'{a}n simulaciones de din\'{a}mica molecular de estafiloxantina inmersa en bicapas de l\'{i}pidos DMPG y DPPG, siguiendo el mismo procedimiento indicado en la secci\'{o}n \ref{sec:1stxpg}, en donde se hace el mismo procedimiento de las membranas puras pero creando 5 r\'{e}plicas por cada sistema.\\
+
+\section{Realizaci\'{o}n de simulaciones de membranas con una concentraci\'{o}n de 15\% mol estafiloxantina}
+Con el objetivo de mirar el efecto mec\'{a}nico de la concentraci\'{o}n de la estafiloxantina en la bicapa lip\'{i}dica de \textit{Staphylococcus aureus}, se realizan las simulaciones para las membranas que contienen un 15\%mol STX respecto a los l\'{i}pidos. Escogiendo membranas con 362 l\'{i}pidos las proporciones quedan: 64STX:362DMPG y 64STX:362DPPG. El ensamblaje y la minimizaci\'{o}n de la energ\'{i}a son iguales que para la membrana pura. Para la relajaci\'{o}n en cambio, las primeras 3 simulaciones se hacen con un con un tiempo total de $25p\mathrm{s}$, pero las siguientes tres se realizan cada una con un tiempo total de $500p\mathrm{s}$ a un paso de tiempo de $2f\mathrm{s}$. Despu\'{e}s de la relajaci\'{o}n se crean 5 r\'{e}plicas para realizar la producci\'{o}n las cuales correr\'{a}n por un tiempo de $400n\mathrm{s}$ cada una, con lo cual se logra un tiempo total de $2\mu\mathrm{s}$.\\
+
+\section{An\'{a}lisis de las Simulaciones}
+
+De las trayectorias generadas en las simulaciones se extraer\'{a}n distintos observables que nos permitan analizar cuantitativamente el comportamiento de estafiloxantina y su efecto en la bicapa de l\'{i}pidos circundantes. Los siguientes observables ser\'{a}n por consiguiente calculados, tanto en funci\'{o}n del tiempo como en promedio durante toda la simulaci\'{o}n:\\
+\begin{enumerate}
+\item \textbf{Orientaci\'{o}n de la cadena diaponeurosporenoica}: El \'{a}ngulo formado por la cadena diaponeurosporenoica en la estafiloxantina con respecto a la membrana es monitoreado durante las simulaciones para as\'{i} poder determinar su orientaci\'{o}n (u orientaciones) de preferencia. Tambi\'{e}n se analiza si la orientaci\'{o}n de la estafiloxantina est\'{a} relacionada con la inserci\'{o}n dentro de la membrana, para esto es medida la coordenada relativa $z$, respecto a la cual se ha insertado el az\'{u}car de la estafiloxantina.\\
+
+\item \textbf{\'{a}rea por l\'{i}pido}: Como una medida del grado de compactamiento de la bicapa se halla el \'{a}rea por l\'{i}pido global mediante la f\'{o}rmula:
+\begin{equation}
+APL=\frac{xy}{N/2}
+\end{equation}
+donde $xy$ es el tama\~no lateral de la caja de simulaci\'{o}n y $N$ es el n\'{u}mero de l\'{i}pidos.
+Adicionalmente, se har\'{a} una medici\'{o}n local de area descrita en las siguientes secciones.
+\item \textbf{Espesor de la membrana}:
+El espesor de la membrana se hallar\'{a} monitoreando la densidad electr\'{o}nica de los l\'{i}pidos como funci\'{o}n de la coordenada normal al plano de la membrana. De esta densidad electr\'{o}nica se hallan los dos m\'{a}ximos que correspondan a los grupos fosfato y se calcula la distancia entre ellos.
+\item  \textbf{Par\'{a}metro de orden del deuterio}:
+El par\'{a}metro de orden del deuterio se calcular\'{a} como una medida de la orientaci\'{o}n promedio de los l\'{i}pidos DMPG y DPPG. De acuerdo a Douliez et. al. \cite{Douliez1998OnBiomembranes} , el par\'{a}metro se define de la siguiente manera: \\
+\begin{equation}
+S_{CD}=\frac{2}{3}S_{xx}+\frac{1}{3}S_{yy},
+ \end{equation}
+donde $S_{xx}$ y $S_{yy}$ se definen de la siguiente manera:
+\begin{equation}
+S_{xx}=\frac{1}{2}\langle 3\cos^2\theta-1\rangle,
+ \end{equation}
+\begin{equation}
+S_{yy}=\frac{1}{2}\langle 3\cos^2\alpha-1\rangle.
+ \end{equation}
+$\theta$ es el \'{a}ngulo medido respecto al vector normal a la membrana y el vector normal al plano definido por los carbonos \ce{C_{i-1}}, \ce{C_{i}} y \ce{C_{i+1}}; $\alpha$ es el \'{a}ngulo medido respecto al vector normal a la membrana y un vector que pertenece al plano definido por los carbonos \ce{C_{i-1}}, \ce{C_{i}} y \ce{C_{i+1}} pero perpendicular al vector que conecta  \ce{C_{i-1}} y \ce{C_{i+1}}.
+
+\item \textbf{Coeficiente de difusi\'{o}n}: 
+Adicional a todas estas medidas estructurales, se analizar\'{a} la difusi\'{o}n de los distintos componentes de la membrana monitoreando el desplazamiento lateral cuadr\'{a}tico promedio $\langle\Delta x^2\rangle$. El coeficiente de difusi\'{o}n, D, se hallar\'{a} mediante una regresi\'{o}n lineal de este desplazamiento en funci\'{o}n del tiempo, gracias a la relaci\'{o}n de Einstein:
+\begin{equation}
+\langle\Delta x^2\rangle= 4Dt
+ \end{equation}
+\item \textbf{Perfil de Estr\'{e}s}: Mediante la herramienta de mdstress \cite{Vanegas2020MdStress.org}, \cite{Vanegas2014ImportanceSimulations}, se calcula el tensor de estr\'{e}s $\mathbf{\sigma}$. El tensor de estr\'{e}s permite obtener las componentes laterales y normales, con respecto al plano de la membrana, de la presi\'{o}n, esto es:
+\begin{equation}
+    P_{L}=\left(p_{xx}+p_{yy}\right)/2
+\end{equation}
+y como $p_{ij}=-\sigma_{ij}$:
+\begin{equation}
+    P_{L}=-\left(\sigma_{xx}+\sigma_{yy}\right)/2
+\end{equation}
+Similarmente ocurre con la componente normal de la presi\'{o}n:
+\begin{equation}
+    P_{N}=p_{zz}=-\sigma_{zz}.
+\end{equation}
+Una vez obtenidas las componentes de la presi\'{o}n, se calcula perfil de estr\'{e}s a lo largo de la coordenada $z$ mediante la f\'{o}rmula:
+\begin{equation}
+    \Pi(z)=P_{L}-P{z},
+\end{equation}
+\end{enumerate}
+%%%%%%%%%%%%%%%%%%%%%5
+Todas estas cantidades se calcular\'{a}n de manera global para toda la bicapa de l\'{i}pidos. Tambi\'{e}n se calcular\'{a}n el area por l\'{i}pido de manera local a diferentes posiciones alrededor de la mol\'{e}cula de estafiloxantina usando un algoritmo basado en teselaciones de Voronoy, implementado dentro de la herramienta glomepro \cite{Melendez-Delgado2018StudyingBilayers}.\\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,144 @@
+\chapter{Simulaciones de Membranas}
+\section{Din\'{a}mica Molecular y Campos de Fuerza}\label{ss:md} 
+Un paradigma central en la biolog\'{i}a es la existencia de un v\'{i}nculo entre la secuencia, la estructura, la din\'{a}mica y la funci\'{o}n de una biomol\'{e}cula, enti\'{e}ndase esta \'{u}ltima como cualquier mol\'{e}cula con un rol biol\'{o}gico \cite{Cui2006}. No \'{u}nicamente la secuencia de amino\'{a}cidos o secuencia de nucle\'{o}ticos, sino tambi\'{e}n la estructura y a la din\'{a}mica son determinantes en la funci\'{o}n de cualquier biomol\'{e}cula. En el caso de las membranas biol\'{o}gicas, la complejidad aumenta, ya que a las prote\'{i}nas de membrana, que se encargan de diversas funciones fisiol\'{o}gicas para las c\'{e}lulas y sus organelos, se suma una rica composici\'{o}n de l\'{i}pidos. Los l\'{i}pidos no son entes pasivos que proveen un medio bidimensional para las prote\'{i}nas de membrana. Por el contrario, ellos afectan tanto las propiedades bioqu\'{i}micas como las propiedades f\'{i}sicas, como la movilidad y la rigidez de las membranas y as\'{i} en \'{u}ltimas influir en su funci\'{o}n.\\
+
+Un m\'{e}todo poderoso para estudiar la din\'{a}mica de biomol\'{e}culas, y en particular las membranas biol\'{o}gicas, es el de las simulaciones por din\'{a}mica molecular (MD por sus siglas en ingl\'{e}s).\\
+
+En la din\'{a}mica molecular se resuelven num\'{e}ricamente las ecuaciones de movimiento de Newton para cada una de las part\'{i}culas que constituyen el sistema, por ejemplo a nivel de \'{a}tomos (alta resoluci\'{o}n espacial) o grupos de atomos (menor resoluci\'{o}n espacial), de donde se obtiene la trayectoria en funci\'{o}n del tiempo de cada part\'{i}cula. Una vez obtenida la trayectoria se pueden analizar las propiedades del sistema en estudio, a partir las velocidades, posiciones y energ\'{i}as de interacci\'{o}n de todo el sistema, registradas durante la simulaci\'{o}n.\\
+
+Las ecuaciones de movimiento de Newton para un conjunto de $N$ part\'{i}culas (3N coordenadas) est\'{a}n restringidas a una funci\'{o}n de energ\'{i}a potencial, denominada $V(\vec{r})$, dependiente solo de la distancia entre part\'{i}culas y afectando las fuerzas y torques de interacci\'{o}n. Estas ecuaciones tienen la forma \cite{Goldstein2001}:
+
+\begin{equation}\label{eq:1}
+m_i\frac{\mathrm{d}^2\vec{r_i}}{\mathrm{d}t^2}=-\vec{\nabla_i}V(\vec{r}_1,...,\vec{r}_N) \text{\hspace{30pt}}i=1,2,...,N,
+\end{equation}
+donde $m_i$ es la masa de la $i$-\'{e}sima part\'{i}cula, $\vec{r_i}$ es su posici\'{o}n y el gradiente $ \vec{\nabla_i}$ se calcula sobre las coordenadas de posici\'{o}n de la $i$-\'{e}sima part\'{i}cula.\\
+
+Para resolver las ecuaciones de movimiento es necesario conocer la fuerza aplicada al sistema en cada instante de tiempo, esta se halla a partir de la energ\'{i}a potencial sobre las part\'{i}culas. En la secci\'{o}n de Campos de fuerza se detalla la naturaleza de estos potenciales.
+\section{Campos de Fuerza}
+Un campo de fuerza (o \textit{force field} e ingl\'{e}s) es un conjunto de t\'{e}rminos emp\'{i}ricos que modelan la interacci\'{o}n entre mol\'{e}culas. El prop\'{o}sito de estos es poder representar la energ\'{i}a potencial de un conjunto de part\'{i}culas interactuantes a trav\'{e}s de funciones aritm\'{e}ticas simples, que puedan ser evaluadas num\'{e}ricamente de manera eficiente a trav\'{e}s del computador \cite{Kukol2014MolecularEdition}. Algunos de los campos de fuerza m\'{a}s utilizados para biomol\'{e}culas son AMBER, CHARMM, GROMOS y OPLS-AA. Todos estos campos de fuerza tienen en com\'{u}n la separaci\'{o}n de la energ\'{i}a potencial en dos t\'{e}rminos: interacciones enlazantes e interacciones no enlazantes. En forma de ecuaci\'{o}n un campo de fuerza t\'{i}picamente contiene los siguientes t\'{e}rminos:
+\begin{equation}\label{eq:2}
+    V=V_{\text{enlazante}}+V_{\text{no enlazante}}
+\end{equation}
+Cada uno de estos est\'{a} a su vez compuesto por los siguientes t\'{e}rminos:
+\begin{itemize}
+\item Interacciones enlazantes: $V_{cov}$, que tienen en cuenta los enlaces covalentes entre \'{a}tomos; $V_{ang}$, vibraciones angulares entre triadas de \'{a}tomos y $V_{tor}$, movimientos de torsi\'{o}n entre grupos de cuatro \'{a}tomos conectados por dos enlaces covalentes:
+\begin{eqnarray}\label{eq:3}
+V_{cov}(r)&=&\sum_{enlaces}k_r\left(r-r_0\right)^2\\
+V_{ang}(r)&=&\sum_{val}k_\theta\left(\theta-\theta_{0}\right)^2\\
+V_{tor}(r)&=&\sum_{dihedros}\sum_{n}\frac{V_n}{2}\left[1+\cos(n\phi-\gamma)\right]
+\end{eqnarray}
+\item Interacciones no enlazantes: que se componen de interacciones de corto alcance de Van der Waals, modeladas a trav\'{e}s de un potencial de Lennard Jones, $V_{LJ}$ e interacciones eletrost\'{a}ticas descritas por medio del potencial de Coulomb, $V_{Coul}$.
+\begin{eqnarray}\label{eq:4}
+V_{LJ}(r)&=&\sum_{j=1}^{N+1}\sum_{i=j+1}^N f_{ij}\left\{\epsilon_{ij}\left[\left(\frac{r_{0ij}}{r_{ij}}\right)^{12}-2\left(\frac{r_{0ij}}{r_{ij}}\right)^6\right]\right\}\\
+V_{Coul}(r)&=&\sum_{j=1}^{N-1}\sum_{i=j+1}^{N}\frac{q_iq_j}{4\pi\epsilon_0\epsilon_R r_{ij}}
+\end{eqnarray}
+\end{itemize}
+Las constantes $k_r,k_\theta,f_{ij},\epsilon_{ij},r_{0ij},q_{i},q_{j}$ son las constantes emp\'{i}ricas que definen el campo de fuerzas. Estas constantes se determinan de distintas maneras , por ejemplo a trav\'{e}s de c\'{a}lculos de mec\'{a}nica cu\'{a}ntica o por optimizacionres para reproducir propiedades termodin\'{a}micas de los sistemas en cuesti\'{o}n como energ\'{i}as de solvataci\'{o}n y funciones de partici\'{o}n.
+
+Una de las diferencias entre los programas est\'{a} en el tratamiento de los \'{a}ngulos dihedros impropios, es decir de los involucrados en la quiralidad de las mol\'{e}culas. Por ejemplo, CHARMM Y GROMOS agregan a las interacciones enlazantes un potencial arm\'{o}nico entre los \'{a}tomos terminales del dihedro (en A-B-C-D ser\'{i}an A y C) denomindado de Urey-Bradley con la forma:
+\begin{equation}\label{eq:5}
+    V_{\mathrm{UB}}=\sum_{\mathrm{Urey-Bradley}} K_{\mathrm{UB}}(b^{A-C}-b^{A-C,0})^2
+\end{equation}
+En AMBER y OPLS-AA esta interacci\'{o}n es incluida en el t\'{e}rmino del potencial de torsiones.\\
+
+En cuanto a los par\'{a}metros de los t\'{e}rminos enlazantes tanto AMBER como CHARMM calculan las constantes de los t\'{e}rminos no enlazantes/entre pares de \'{a}tomos $i$,$j$ como:
+\begin{equation}\label{eq:6}
+   \epsilon_{ij}=\sqrt{\epsilon_{i}\epsilon_{j}}
+\end{equation}
+\begin{equation}\label{eq:7}
+   r_{0ij}=\frac{1}{2}\left(r_i+r_j\right)
+\end{equation}
+\section{Soluci\'{o}n de las ecuaciones de Movimiento}
+Debido al tama\~no de los sistemas biol\'{o}gicos a considerar, en el caso de estafiloxantina embebida en una bicapa con 128 l\'{i}pidos de DMPG (O DPPG) del orden de 15000 \'{a}tomos \cite{Melendez-Delgado2018StudyingBilayers}, las ecuaciones de movimiento \eqref{eq:1} deben resolverse num\'{e}ricamente. Para resolverlas se usan algoritmos como el de Verlet, el de ``\textit{leapfrog}'', el de velocidad de Verlet o el de Beeman \cite{Mazur1997CommonRevisited}.\\
+En el algoritmo de Verlet se hace una aproximaci\'{o}n en series de Taylor a segundo orden de las posiciones hacia adelante $\vec{r}_{i}(t_{n+1})$ y hacia atr\'{a}s $\vec{r}_{i}(t_{n-1})$, ver \cite{Melendez-Delgado2018StudyingBilayers},\cite{Mazur1997CommonRevisited}; que al restarlas da la siguiente soluci\'{o}n iterada:
+\begin{equation}\label{eq:8}
+t_{n}=n\Delta t
+\end{equation}
+\begin{equation}\label{eq:9}
+\vec{r}_{(i,t_{n+1})}=2\vec{r}_{(i,t_{n})}-\vec{r}_{(i,t_{n-1})}+\vec{a}_{(i,t_{n})}(\Delta t)^2
+\end{equation}
+\begin{equation}\label{eq:10}
+\vec{v}_{(i,t_{n})}=\frac{\vec{r}_{(i,t_{n+1})}-\vec{r}_{(i,t_{n-1})}}{2\Delta t}
+\end{equation}
+Donde la ecuaci\'{o}n \eqref{eq:4} para la velocidad es una expresi\'{o}n de diferencias finitas y se obtuvo mediante el promedio entre $v_{(i,tn+\Delta t/2)}$ y $v_{(i,tn-\Delta t/2)}$.
+Obs\'{e}rvese que las ecuaciones \eqref{eq:3} y \eqref{eq:4} solo dependen de las coordenadas anteriores y no de las velocidades. Luego, solo es necesario usar la ecuaci\'{o}n \eqref{eq:3} para encontrar la trayectoria de la part\'{i}cula.\\
+
+En el algoritmo de ``leapfrog" se resuelven las ecuaciones de movimiento \eqref{eq:1} hallando las posiciones de las part\'{i}culas para los tiempos $t_1,t_2=t_1+\Delta t,...,t_n=t_{1}+n\Delta t$, mientras que las velocidades de las part\'{i}culas se hallan para los tiempos $t_1-\Delta t/2,t_2=t_1+\Delta t/2,...,t_n=t_{1}+(n-1/2)\Delta t$, ver \cite{Mazur1997CommonRevisited}.  Este algoritmo tiene la forma:
+\begin{equation}\label{eq:11}
+\vec{v}{(i,t_{n+1/2})}=\vec{v}{(i,t_{n-1/2})}+\vec{a}{(i,t_{n})}\Delta t,
+\end{equation}
+\begin{equation}\label{eq:12}
+\vec{r}{(i,t_{n+1})}=\vec{r}{(i,t_{n-1})}+\vec{v}{(i,t_{n+1/2})}\Delta t.
+\end{equation}
+Como se han aproximado las ecuaciones para la velocidad y para la aceleraci\'{o}n a una l\'{i}nea recta, entonces el valor medio de las velocidad entre los tiempos $t_{n-1/2}$ y $t_{n+1/2}$ es:
+\begin{equation}\label{eq:13}
+\vec{r}{(i,t_{n+1})}=\vec{r}{(i,t_{n-1})}+\vec{v}{(i,t_{n+1/2})}\Delta t.
+\end{equation}
+Utilizando las ecuaciones \eqref{eq:5}, \eqref{eq:6} y \eqref{eq:7} se obtiene otra forma de escribir el algoritmo de leapfrog:
+\begin{eqnarray}
+  x_{i+1} &= x_i + v_i\, \Delta t + \tfrac{1}{2}\,a_i\, \Delta t^{\,2}, \\
+  v_{i+1} &= v_i + \tfrac{1}{2}(a_i + a_{i+1})\,\Delta t.
+\end{eqnarray}
+
+Por otro lado, las condiciones iniciales para resolver los algoritmos pueden ser obtenidas por m\'{e}todos experimentales como la cristalograf\'{i}a de rayos-X, resonancia magn\'{e}tica nuclear o microscop\'{i}a electr\'{o}nica criog\'{e}nica (m\'{a}s com\'{u}n en prote\'{i}nas y \'{a}cidos nucl\'{e}icos) o computacionalmente para sistemas de muchas mol\'{e}culas, realizando un autoensamblaje y minimizando la energ\'{i}a del ensamblaje. Las velocidades iniciales se generan de manera aleatoria a partir de la distribuci\'{o}n Maxwell-Boltzmann para la energ\'{i}a cin\'{e}tica a una temperatura $T$ dada.\\
+%\vec{v}_{i}(t_{n}+\Delta t/2)=\vec{v}_i(t_{n}-\Delta t/2)+\frac{\Delta t}{m_i}\vec{F}_{i}(t_{n})
+% \section{Simulaciones en Membranas}\label{ss:smem}
+% \subsection*{Propiedades que se pueden Obtener de las Simulaciones y Caracterizan las Membranas}
+%  \subsubsection{\'{A}rea por L\'{i}pido}
+% Como una medida del grado de compactamiento de la bicapa es posible hallar el \'{a}rea por l\'{i}pido global mediante la f\'{o}rmula:
+% \begin{equation}
+% APL=\frac{xy}{N/2},
+% \end{equation}
+% donde $xy$ es el tama\~no lateral de la caja de simulaci\'{o}n y $N$ es el n\'{u}mero de l\'{i}pidos.\\
+
+% Otro m\'{e}todo propuesto por Allen et. al. \cite{ALLEN2008GridMAT-MD:Dynamics} e implementado por Gapsys et. al. \cite{Gapsys2013ComputationalProperties} es el de GridMAT-MD. 
+% \subsubsection{Espesor de la membrana}
+% El espesor de la membrana se hallar\'{a} monitoreando la densidad electr\'{o}nica de los l\'{i}pidos como funci\'{o}n de la coordenada normal al plano de la membrana. De esta densidad electr\'{o}nica se hallan los dos m\'{a}ximos que correspondan a los grupos fosfato y se calcula la distancia entre ellos.
+% \subsubsection{{Par\'{a}metro de orden del deuterio}}
+% El par\'{a}metro de orden del deuterio se calcular\'{a} como una medida de la orientaci\'{o}n promedio de los l\'{i}pidos DMPG y DPPG. De acuerdo a Douliez et. al. \cite{Douliez1998OnBiomembranes} , el par\'{a}metro se define de la siguiente manera: \\
+% \begin{equation}
+% S_{CD}=\frac{2}{3}S_{xx}+\frac{1}{3}S_{yy},
+%  \end{equation}
+% donde $S_{xx}$ y $S_{yy}$ se definen de la siguiente manera:
+% \begin{equation}
+% S_{xx}=\frac{1}{2}\langle 3\cos^2\theta-1\rangle,
+%  \end{equation}
+% \begin{equation}
+% S_{yy}=\frac{1}{2}\langle 3\cos^2\alpha-1\rangle.
+%  \end{equation}
+% $\theta$ es el \'{a}ngulo medido respecto al vector normal a la membrana y el vector normal al plano definido por los carbonos \ce{C_{i-1}}, \ce{C_{i}} y \ce{C_{i+1}}; $\alpha$ es el \'{a}ngulo medido respecto al vector normal a la membrana y un vector que pertenece al plano definido por los carbonos \ce{C_{i-1}}, \ce{C_{i}} y \ce{C_{i+1}} pero perpendicular al vector que conecta  \ce{C_{i-1}} y \ce{C_{i+1}}.
+
+% \subsubsection{Coeficiente de difusi\'{o}n}
+% Adicional a todas estas medidas estructurales, se analizar\'{a} la difusi\'{o}n de los distintos componentes de la membrana monitoreando el desplazamiento lateral cuadr\'{a}tico promedio $\langle\Delta x^2\rangle$. El coeficiente de difusi\'{o}n, D, se hallar\'{a} mediante una regresi\'{o}n lineal de este desplazamiento en funci\'{o}n del tiempo, gracias a la relaci\'{o}n de Einstein:
+% \begin{equation}
+% \langle\Delta x^2\rangle= 4Dt
+%  \end{equation}
+% \subsubsection{Perfil de Estr\'{e}s}
+% Mediante la herramienta de mdstress \cite{Vanegas2020MdStress.org}, \cite{Vanegas2014ImportanceSimulations}, se calcula el tensor de estr\'{e}s $\mathbf{\sigma}$. El tensor de estr\'{e}s permite obtener las componentes laterales y normales, con respecto al plano de la membrana, de la presi\'{o}n, esto es:
+% \begin{equation}
+%     P_{L}=\left(p_{xx}+p_{yy}\right)/2
+% \end{equation}
+% y como $p_{ij}=-\sigma_{ij}$:
+% \begin{equation}
+%     P_{L}=-\left(\sigma_{xx}+\sigma_{yy}\right)/2
+% \end{equation}
+% Similarmente ocurre con la componente normal de la presi\'{o}n:
+% \begin{equation}
+%     P_{N}=p_{zz}=-\sigma_{zz}.
+% \end{equation}
+% Una vez obtenidas las componentes de la presi\'{o}n, se calcula perfil de estr\'{e}s a lo largo de la coordenada $z$ mediante la f\'{o}rmula:
+% \begin{equation}
+%     \Pi(z)=P_{L}-P{z},
+% \end{equation}
+
+
+
+
+
+\section{Trabajo Preliminar}\label{ss:pre}
+\subsection*{Estudio del Rol de Estafiloxantina en la modulaci\'{o}n de par\'{a}metros estructurales de bicapas lip\'{i}dicas compuestas por DMPG y DPPG  \cite{Melendez-Delgado2018StudyingBilayers}}
+Para estudiar el rol de la estafiloxantina en bicapas lip\'{i}dicas compuestas por dimiristoil fosfatidilglicerol (DMPG) y dipalmitoil fosfatidilglicerol (DPPG) Mel\'{e}ndez et al. \cite{Melendez-Delgado2018StudyingBilayers} realizaron simulaciones por din\'{a}mica molecular para 4 sistemas con las siguientes composiciones: DMPG, DMPG$+$estafiloxantina, DPPG y DPPG$+$estafiloxantina. De los resultados obtenidos de estas simulaciones se obtuvieron par\'{a}metros que dan cuenta del efecto de la estafiloxantina en los l\'{i}pidos circundantes a nivel global y local, as\'{i} como su orientaci\'{o}n dentro de la membrana. Estos par\'{a}metros incluyen el par\'{a}metro de orden del Deuterio $S_{CD}$, el espesor de la membrana, el coeficiente lateral de difusi\'{o}n y el \'{a}rea por l\'{i}pido. \\
+
+Estas simulaciones revelaron que la estafiloxantina adopta dos orientaciones diferentes respecto a la membrana. La estafiloxantina se encontr\'{o} mayoritariamente alrededor de los 100\textdegree para el sistema   DMPG+estafiloxantina. Para el sistema  DPPG+estafiloxantina muestre\'{o} dos \'{a}ngulos preferenciales,  uno m\'{a}s probable alrededor de 100\textdegree y otro un poco menos probable, alrededor de 135\textdegree. Los \'{a}ngulos menores a 120\textdegree representan una orientaci\'{o}n horizontal de la estafiloxantina y los mayores a 120\textdegree  una orientaci\'{o}n vertical respecto al plano normal de la membrana.\\
+
+La orientaci\'{o}n horizontal es un resultado inesperado, pues esta es una conformaci\'{o}n inusual para l\'{i}pidos. Esto nos llev\'{o} a pensar que algunos de los par\'{a}metros del campo de fuerzas de la estafiloxantina no estaban bien definidos. En efecto se encontr\'{o} que los par\'{a}metros de torsi\'{o}n, obtenidos a trav\'{e}s del servidor CHARMM-GUI para la cadena de enlaces dobles conjugados en la estafiloxantina, no son los m\'{a}s adecuados, debido a la inusual estructura del \'{a}cido daponourosporen\'{o}ico. Como alternativa se utilizaron los par\'{a}metros de torsi\'{o}n de grupos benceno, que tambi\'{e}n presentan insaturaciones conjugadas, para corregir los par\'{a}metros de la cadena diaponeurosporenoica. El uso de los par\'{a}metros de torsi\'{o}n del benceno permiti\'{o} que la cadena diaponeurosporenoica adoptara una estructura plana, esperada debido a la presencia de los enlaces dobles conjugados. Sin embargo, una validaci\'{o}n rigurosa de estos par\'{a}metros no ha sido realizada. Adicionalmente, los \'{a}ngulos de torsi\'{o}n entre los carbonos pr\'{o}ximos al grupo \'{e}ster (ver figura \ref{fig:stx}) reportaron una baja puntuaci\'{o}n durante la parametrizaci\'{o}n por CHARMM-GUI, debido a la presencia del grupo carboxilo que induce una redistribuci\'{o}n de la densidad electr\'{o}nica. Es necesario corregir los parametros tomando esto en cuenta. Adicionalmente, para descartar posibles artefactos introducidos por uno u otro campo de fuerzas en la orientaci\'{o}n preferente de estafiloxantina, se hace indispensable parametrizar esta mol\'{e}cula con otro conjunto de par\'{a}metros, por ejemplo AMBER.
