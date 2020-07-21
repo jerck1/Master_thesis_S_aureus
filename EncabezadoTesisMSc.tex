@@ -11,25 +11,29 @@
 \usepackage{here}
 \usepackage{graphicx}
 \usepackage{lscape}
-\usepackage{tabularx}
+\usepackage{rotating,tabularx}
 \usepackage{subfigure}
 \usepackage{longtable}
-\usepackage{rotating} 
+\usepackage{blindtext,rotating} 
+\usepackage{rotating,tabularx}
+\usepackage{standalone} %adds another latex docs with a preamble
 \renewcommand{\theequation}{\thechapter-\arabic{equation}}
 \renewcommand{\thefigure}{\textbf{\thechapter-\arabic{figure}}}
 \renewcommand{\thetable}{\textbf{\thechapter-\arabic{table}}}
 
 
 \pagestyle{fancyplain}%\addtolength{\headwidth}{\marginparwidth}
-\textheight22.5cm \topmargin0cm \textwidth16.5cm
+\textheight22.5cm \topmargin0cm \textwidth16cm
 \oddsidemargin0.5cm \evensidemargin-0.5cm%
+%1cm+\voffset
 \renewcommand{\chaptermark}[1]{\markboth{\thechapter\; #1}{}}
 \renewcommand{\sectionmark}[1]{\markright{\thesection\; #1}}
 \lhead[\fancyplain{}{\thepage}]{\fancyplain{}{\rightmark}}
 \rhead[\fancyplain{}{\leftmark}]{\fancyplain{}{\thepage}}
 \fancyfoot{}
+%\fancyhead{}
 \thispagestyle{fancy}%
-\addtolength{\headwidth}{3cm}
+\addtolength{\headwidth}{2.3cm}
 \unitlength1mm %Define la unidad LE para Figuras
 \mathindent0cm %Define la distancia de las formulas al texto,  fleqn las descentra
 \marginparwidth0cm
@@ -54,5 +58,10 @@
 \usepackage[version=4]{mhchem}%nombres compuestos quimicos
 \usepackage{hyperref}
 \usepackage{csquotes}
+\makeatletter
+\define@key{Gin}{resolution}{\pdfimageresolution=#1\relax}%change resolution of an image
+\makeatother
 \usepackage[backend=bibtex,style=phys,articletitle=false,biblabel=brackets,chaptertitle=false,pageranges=false]{biblatex}
 \bibliography{Mendeley.bib}
+\usepackage{float} %figures inside the text and not outside
+\usepackage{booktabs}
